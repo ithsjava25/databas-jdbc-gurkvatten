@@ -152,14 +152,23 @@ public class Main {
         System.out.print("Password: ");
         String pass = sc.nextLine();
 
-        String query = "INSERT INTO account (first_name, last_name, ssn, password) VALUES (?, ?, ?, ?)";
+        String generatedName = "";
+        if (first.length() >= 3 && last.length() >= 3) {
+            generatedName = first.substring(0, 3) + last.substring(0, 3);
+        } else {
+            generatedName = first + last;
+        }
+
+        String query = "INSERT INTO account (name, first_name, last_name, ssn, password) VALUES (?, ?, ?, ?, ?)";
+
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, first);
-            stmt.setString(2, last);
-            stmt.setString(3, ssn);
-            stmt.setString(4, pass);
+            stmt.setString(1, generatedName); // Sätter det genererade namnet
+            stmt.setString(2, first);
+            stmt.setString(3, last);
+            stmt.setString(4, ssn);
+            stmt.setString(5, pass);
             stmt.executeUpdate();
-            System.out.println("Account created.");
+            System.out.println("Account created. Your username is: " + generatedName);
         }
     }
 
