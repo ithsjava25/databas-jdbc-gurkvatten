@@ -48,10 +48,68 @@ public class Main {
                     }
                 }
             }
+            while (true) {
+                printMenu();
+                String option = scanner.nextLine();
+
+                switch (option) {
+                    switch (option) {
+                        case "1":
+                            listMoonMissions(connection);
+                            break;
+                        case "2":
+                            System.out.print("Enter mission_id: ");
+                            String idStr = scanner.nextLine();
+                            getMoonMissionById(connection, idStr);
+                            break;
+                        case "3":
+                            System.out.print("Enter year: ");
+                            String yearStr = scanner.nextLine();
+                            countMissionsByYear(connection, yearStr);
+                            break;
+                        case "4":
+                            System.out.println("Not implemented yet (Step 3)");
+                            break;
+                        case "5":
+                            System.out.println("Not implemented yet (Step 3)");
+                            break;
+                        case "6":
+                            System.out.println("Not implemented yet (Step 3)");
+                            break;
+                        case "0":
+                            return;
+                        default:
+                            System.out.println("Invalid option, try again.");
+                }
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void printMenu() {
+        System.out.println("\n--- Moon Mission Menu ---");
+        System.out.println("1. List moon missions");
+        System.out.println("2. Get moon mission by id");
+        System.out.println("3. Count missions by year");
+        System.out.println("4. Create an account");
+        System.out.println("5. Update an account password");
+        System.out.println("6. Delete an account");
+        System.out.println("0. Exit");
+        System.out.print("Choice: ");
+    }
+
+    private void listMoonMissions(Connection conn) throws SQLException {
+        String query = "SELECT * FROM moon_missions";
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                System.out.println(rs.getString("name"));
+            }
+        }
     }
 
     /**
