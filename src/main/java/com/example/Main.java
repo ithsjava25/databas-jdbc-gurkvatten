@@ -52,7 +52,6 @@ public class Main {
                 printMenu();
                 String option = scanner.nextLine();
 
-                switch (option) {
                     switch (option) {
                         case "1":
                             listMoonMissions(connection);
@@ -81,7 +80,7 @@ public class Main {
                         default:
                             System.out.println("Invalid option, try again.");
                 }
-                }
+
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -102,7 +101,7 @@ public class Main {
     }
 
     private void listMoonMissions(Connection conn) throws SQLException {
-        String query = "SELECT * FROM moon_missions";
+        String query = "SELECT * FROM moon_mission";
         try (PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -111,6 +110,38 @@ public class Main {
             }
         }
     }
+
+    private void getMoonMissionById(Connection conn, String id) throws SQLException {
+        String query = "SELECT * FROM moon_mission WHERE mission_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    System.out.println("Mission: " + rs.getString("name") +
+                            " (ID: " + rs.getInt("mission_id") +
+                            "), Year: " + rs.getInt("launch_year"));
+                } else {
+                    System.out.println("Mission not found.");
+                }
+            }
+        }
+    }
+
+    private void countMissionsByYear(Connection conn, String year) throws SQLException {
+        String query = "SELECT COUNT(*) FROM moon_mission WHERE launch_year = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, year);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    System.out.println("Found " + count + " missions in " + year);
+                }
+            }
+        }
+    }
+
+
+
 
     /**
      * Determines if the application is running in development mode based on system properties,
@@ -139,7 +170,7 @@ public class Main {
         return (v == null || v.trim().isEmpty()) ? null : v.trim();
     }
     private boolean isValidLogin(Connection conn, String user, String pass) throws SQLException {
-        String query = "SELECT * FROM account WHERE username = ? AND password = ?";
+        String query = "SELECT * FROM account WHERE name = ? AND password = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, user);
